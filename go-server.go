@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -57,7 +59,16 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 //ie. host.com/localproxy/8080/index.html goes to localhost:8080/index.html
 
 func localproxyHandler(w http.ResponseWriter, r *http.Request) {
-	host := "http://localhost:" + r.URL.Path[1] + "/" + r.URL.Path[2:]
+	rpath := strings.Split(string(r.URL.Path), "/")
+	fmt.Println(rpath)
+	host := &url.URL{
+		Scheme: "http",
+		Host:   "localhost:" + rpath[2],
+	}
+	path := strings.Join(rpath[3:], "/")
+	if path != "" {
+		host.Path = path
+	}
 	httputil.NewSingleHostReverseProxy(host).ServeHTTP(w, r)
 }
 
@@ -76,7 +87,7 @@ func main() {
 	server443.HandleFunc("/", landHandler)
 	server443.HandleFunc("/users/", pathHandler)
 	server443.HandleFunc("/bin/", binHandler)
-	server443.Handle("/localproxy/", localproxyHandler)
+	server443.HandleFunc("/localproxy/", localproxyHandler)
 	//server443.HandleFunc("/api/", apiHandler)
 
 	go func() {
@@ -86,11 +97,13 @@ func main() {
 	}()
 	go func() {
 		fmt.Println("server running on :443")
-		e := http.ListenAndServeTLS(":443",
-			"/etc/letsencrypt/live/ear7h.net/cert.pem",
-			"/etc/letsencrypt/live/ear7h.net/privkey.pem",
-			server443)
-		//e := http.ListenAndServe(":443", server443)
+		/*
+			e := http.ListenAndServeTLS(":443",
+				"/etc/letsencrypt/live/ear7h.net/cert.pem",
+				"/etc/letsencrypt/live/ear7h.net/privkey.pem",
+				server443)
+		*/
+		e := http.ListenAndServe(":443", server443)
 		fmt.Println(e)
 	}()
 
