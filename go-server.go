@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"time"
 )
@@ -35,7 +36,6 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 // /var/www/ear7h-net/bin folder contains heavy media, videos, sound, etc.
 func binHandler(w http.ResponseWriter, r *http.Request) {
 	path := "/var/www/ear7h-net/" + r.URL.Path[1:]
@@ -50,13 +50,20 @@ func binHandler(w http.ResponseWriter, r *http.Request) {
 
 /*
 func apiHandler(w http.ResponseWriter, r *http.Request) {
-
 }
 */
 
+// proxies requests to localhost on port specified after /localproxy/
+//ie. host.com/localproxy/8080/index.html goes to localhost:8080/index.html
+
+func localproxyHandler(w http.ResponseWriter, r *http.Request) {
+	host := "http://localhost:" + r.URL.Path[1] + "/" + r.URL.Path[2:]
+	httputil.NewSingleHostReverseProxy(host).ServeHTTP(w, r)
+}
+
 func main() {
 	finish := make(chan bool)
-	fmt.Println("\nSERVER STARTING \n")
+	fmt.Println("\nSERVER STARTING\n")
 
 	server80 := http.NewServeMux()
 
@@ -69,6 +76,7 @@ func main() {
 	server443.HandleFunc("/", landHandler)
 	server443.HandleFunc("/users/", pathHandler)
 	server443.HandleFunc("/bin/", binHandler)
+	server443.Handle("/localproxy/", localproxyHandler)
 	//server443.HandleFunc("/api/", apiHandler)
 
 	go func() {
@@ -79,9 +87,9 @@ func main() {
 	go func() {
 		fmt.Println("server running on :443")
 		e := http.ListenAndServeTLS(":443",
-		"/etc/letsencrypt/live/ear7h.net/cert.pem",
-		"/etc/letsencrypt/live/ear7h.net/privkey.pem",
-		server443)		
+			"/etc/letsencrypt/live/ear7h.net/cert.pem",
+			"/etc/letsencrypt/live/ear7h.net/privkey.pem",
+			server443)
 		//e := http.ListenAndServe(":443", server443)
 		fmt.Println(e)
 	}()
