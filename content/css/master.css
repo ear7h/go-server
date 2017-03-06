@@ -1,0 +1,25 @@
+@font-face {
+  font-family: 'Ubuntu-Mono';
+  font-style: normal;
+  src: url('UbuntuMono-R.ttf');
+}@font-face {
+  font-family: 'Ubuntu-Mono';
+  font-style: italic;;
+  src: url('UbuntuMono-RI.ttf');
+}@font-face {
+  font-family: 'Ubuntu-Mono';
+  font-style: ;
+  src: url('UbuntuMono-R.ttf');
+}
+
+html {
+  font-family: 'Ubuntu-Mono';
+}
+
+div#content {
+  width: 60%;
+}
+
+h1 {
+  font-style: italic;
+}
