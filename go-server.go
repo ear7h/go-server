@@ -23,9 +23,10 @@ func landHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ./path folder contains user content
+// /var/www/ear7h-net/path folder contains user content
 func pathHandler(w http.ResponseWriter, r *http.Request) {
-	f, err := os.Open(r.URL.Path[1:])
+	path := "/var/www/ear7h-net/" + r.URL.Path[1:]
+	f, err := os.Open(path)
 	if err != nil {
 		four04, _ := os.Open("content/notfound.html")
 		http.ServeContent(w, r, "", time.Now(), four04)
@@ -35,9 +36,10 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// ./bin folder contains heavy media, videos, sound, etc.
+// /var/www/ear7h-net/bin folder contains heavy media, videos, sound, etc.
 func binHandler(w http.ResponseWriter, r *http.Request) {
-	f, err := os.Open(r.URL.Path[1:])
+	path := "/var/www/ear7h-net/" + r.URL.Path[1:]
+	f, err := os.Open(path)
 	if err != nil {
 		four04, _ := os.Open("content/notfound.html")
 		http.ServeContent(w, r, "", time.Now(), four04)
@@ -65,7 +67,7 @@ func main() {
 	server443 := http.NewServeMux()
 
 	server443.HandleFunc("/", landHandler)
-	server443.HandleFunc("/path/", pathHandler)
+	server443.HandleFunc("/users/", pathHandler)
 	server443.HandleFunc("/bin/", binHandler)
 	//server443.HandleFunc("/api/", apiHandler)
 
