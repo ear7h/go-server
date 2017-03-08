@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="http://code.jquery.com/color/jquery.color-2.1.2.js"></script>
+
+  </head>
+  <body onload="loop()">
+    <script>
+      function getColor() {
+        $.ajax({
+          url: "/localproxy/8080/light"
+        }).done((data) => {
+          var color = JSON.parse(data);
+          color = ((1023 - color) / 1023) * 255;
+          color = Math.floor(color);
+          console.log(color);
+          $('body').animate({backgroundColor: 'rgb(' + color +',' + color + ',0)'}, 1000);
+        })
+      }
+      function loop() {
+        setTimeout(function () {
+          console.log('looped')
+          getColor();
+          loop();
+        }, 1000);
+      }
+    </script>
+
+  </body>
+</html>

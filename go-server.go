@@ -50,8 +50,14 @@ func binHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//proxies requests to nodejs api server
 /*
 func apiHandler(w http.ResponseWriter, r *http.Request) {
+	host := &url.URL{
+		Scheme: "http",
+		Host:   "localhost:81",
+	}
+	httputil.NewSingleHostReverseProxy(host).ServeHTTP(w, r)
 }
 */
 
@@ -60,7 +66,6 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 
 func localproxyHandler(w http.ResponseWriter, r *http.Request) {
 	rpath := strings.Split(string(r.URL.Path), "/")
-	fmt.Println(rpath)
 	host := &url.URL{
 		Scheme: "http",
 		Host:   "localhost:" + rpath[2],
@@ -74,7 +79,7 @@ func localproxyHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	finish := make(chan bool)
-	fmt.Println("\nSERVER STARTING\n")
+	fmt.Print("\nSERVER STARTING\n\n")
 
 	server80 := http.NewServeMux()
 
@@ -88,7 +93,7 @@ func main() {
 	server443.HandleFunc("/users/", pathHandler)
 	server443.HandleFunc("/bin/", binHandler)
 	server443.HandleFunc("/localproxy/", localproxyHandler)
-	//server443.HandleFunc("/api/", apiHandler)
+	//erver443.HandleFunc("/api/", apiHandler)
 
 	go func() {
 		fmt.Println("server running on :80")
