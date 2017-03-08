@@ -70,10 +70,6 @@ func localproxyHandler(w http.ResponseWriter, r *http.Request) {
 		Scheme: "http",
 		Host:   "localhost:" + rpath[2],
 	}
-	path := strings.Join(rpath[3:], "/")
-	if path != "" {
-		host.Path = path
-	}
 	httputil.NewSingleHostReverseProxy(host).ServeHTTP(w, r)
 }
 
