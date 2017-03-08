@@ -135,12 +135,11 @@ func main() {
 	}()
 	go func() {
 		fmt.Println("server running on :443")
-		/*
-			e := http.ListenAndServeTLS(":443",
-				"/etc/letsencrypt/live/ear7h.net/cert.pem",
-				"/etc/letsencrypt/live/ear7h.net/privkey.pem",
-				server443)
-		*/e := http.ListenAndServe(":443", server443)
+		e := http.ListenAndServeTLS(":443",
+			"/etc/letsencrypt/live/ear7h.net/cert.pem",
+			"/etc/letsencrypt/live/ear7h.net/privkey.pem",
+			server443)
+		//e := http.ListenAndServe(":443", server443)
 		fmt.Println(e)
 	}()
 
