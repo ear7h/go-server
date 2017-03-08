@@ -18,7 +18,7 @@
     <script>
       function getColor() {
         $.ajax({
-          url: "/light"
+          url: "/fwdlocal/8080/light"
         }).done((data) => {
           var color = JSON.parse(data);
           color = Math.floor(((1023 - color) / 1023) * 255);
